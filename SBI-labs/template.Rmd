@@ -1,0 +1,224 @@
+---
+title: "Your title"
+author: "Wei-Fu, University of Potsdam, Germany"
+date: "2024-11-13 06:59"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+**Abstract**
+
+Some text ...
+
+## Introduction
+
+Some text ...
+
+## Data and Methods
+
+Text ...
+
+## Statistical Analysis
+
+Text
+
+## Results
+
+Text 
+
+## Discussion
+
+Text
+
+## Acknowledgment
+
+Text
+
+## References
+
+Text
+
+## R Examples
+
+Delete the text which follows at the end:
+
+Data loading
+
+```{r label=data,eval=TRUE}
+options(width=90)
+data(iris)
+summary(iris)
+```
+
+Table example:
+
+```{r eval=TRUE,label=table,results="asis"}
+if (require('knitr',quietly=TRUE)) {
+    knitr::kable(head(iris))
+} else {
+    cat(df2md(head(iris)))
+}   
+```
+
+Figure example:
+
+```{r eval=TRUE,label=fig1}
+png("iris.png")
+with(iris,boxplot(Sepal.Length ~ Species,col=3:5))
+dev.off()
+```
+
+![](iris.png)
+
+
+Inline  code  example:  We have `r  nrow(iris)`  plants in the  dataset.  That
+probably needs a fix within the pantcl4r package.
+
+Let's create an other expression 3+4 is `r 3+4`.
+
+The following does only work with the pantcl4r package:
+
+We can display flowchart using [GraphViz](https://graphviz.org/docs):
+
+```{.kroki eval=TRUE,dia=graphviz,echo=FALSE}
+digraph g {
+  rankdir="LR"
+  node[shape=note,style=filled,fillcolor=salmon];
+  A -> B[label="pantcl4r"]
+  A[label="Rmd"]
+  B[label="HTML"]
+}
+```
+
+Or using [Ditaa](https://github.com/stathissideris/ditaa):
+
+```{.kroki dia=ditaa,eval=TRUE}
+/--------\                 +--------+ 
+| {d}    |    pantcl4r     | {d}    |
+| Rmd    +---------------->| HTML   |
+|   cEEE |                 |   cEFF |
+\--------/                 +--------+
+```
+
+Python example:
+
+```{.cmd file="sample.py" eval=true}
+#!/usr/bin/env python3
+import sys
+print ("Hello Python 3 World!")
+print (sys.version)
+```
+
+```{py eval=TRUE}
+import sys
+print ("Hello Python 3 World!")
+print (sys.version)
+```
+
+You can as well inline short Python expressions: `py import sys;print(sys.version)`:
+
+## Markdown formatting
+
+* list item
+* list item
+
+__bold__, __italic__, `typewriter`
+
+> indented
+
+> * indented list
+  * indented list
+
+| col1  | col2 | col 3 |
+|:-----:|:----:|:-----:|
+|   1   |  2   | 3    |
+|   4   |  5   | 6    |
+
+
+Some more text then here ...
+
+## Document processing
+
+This  document can be processed to HTML using the packages  knitr and markdown
+or the pantcl4r package:
+
+```
+library(knitr);
+knitr::knit2html('template.Rmd',output='report.md');
+### which should create a file report.html in your current directory
+```
+
+Alternatively  you can use the package  pantcl4r  which can be installed  like
+this:
+
+```
+install.packages(
+    "https://github.com/mittelmark/pantcl4r/releases/download/v0.3.1/pantcl4r_0.3.1.tar.gz",
+    repos=NULL);
+```
+
+Thereafter you should check the package vignette:
+
+```
+library(pantcl4r)
+vignette("tutorial",package="pantcl4r")
+```
+
+To process a Markdown file for example, with embedded R code, you can do the following:
+
+```
+pantcl4r::pantcl("input.Rmd","output.html")
+```
+
+If you work on a Unix system we can as well create a Bash script and place it into your personal bin folder.
+
+```
+#!/usr/bin/env bash
+function rmd2html {
+    if [[ -z $1 ]]; then
+        echo "Usage: $0 Rmdfile"
+    else
+        echo "if (require('rmarkdown')) { rmarkdown::render('$1') }
+               else (library(pantcl4r)) { pantcl('$1') }
+             " | Rscript -
+    fi
+}
+# delegate arguments to the function
+rmd2html "$@"
+```
+
+If you have the  rmarkdown  package and pandoc  installed  you can directly do
+this from your package:
+
+```
+library(rmarkdown);
+rmarkdown::render('template.Rmd',html_document())
+```
+
+Or using pantcl4r you can do the following:
+
+```
+library(pantcl4r)
+pantcl4r::pantcl("template.Rmd")
+```
+
+My rmarkdown package installation is currently broken more features, more often problems ...
+
+## pantcl4r
+
+__Excuse:__
+Please         take         into         consideration         that        the
+[pantcl4r package](https://github.com/mittelmark/pantcl4r)  has  only  one  developer,
+whereas the [rmarkdown  package](https://github.com/rstudio/rmarkdown) has 129 developers or the 
+[knitr package](https://github.com/yihui/knitr) has around 170 developers.
+
+
+Features of the package `pantcl4r`:
+
+- does not depend on other r-packages except on tcltk which is installed by default on Linux and Windows with every R installation
+- in contrast for instance rmarkdown depend on 25 other packages
+- supports Shell scripts, R, Python, Octave (the open source Matlab) and the Tcl programming languages out of the box
+- supports [kroki webservervice](https://kroki.io/)
+- can use other tools directly

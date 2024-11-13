@@ -1,0 +1,50 @@
+ ---
+ title: Exercise 4 Statistical Bioinformatics
+ author: Your Name
+ date: 2024-11-06
+ ---
+
+ ## Header 1 - Example text
+ 
+ This is text, the dot below is just to avoid interpretation as I write R-Markdown in R-Markdown ...
+ 
+ ## Header 2 - R-code example
+ 
+ .```{r}
+ data(iris)
+ head(iris)
+ .```
+ 
+ ## Header 3 - R inline in text
+ 
+ This is some text which tells that we have `'r nrow(iris)'` iris plants in the sample (replace single quotes with backticks).
+ 
+ ## Header 4 - A plot
+ 
+ .```{r fig=TRUE}
+ pairs(iris[,1:4],col=as.numeric(iris$Species)+1)
+ .```
+ 
+ ## Header 5 - table
+ 
+ .```{r results='asis'}
+ knitr::kable(head(iris))
+ .```
+ 
+ ## Header 6 - formatting
+ 
+ ### Subheader
+ 
+ * list item 1
+ * list item 2
+    * sublist item 1
+    * sublist item 2
+
+ 1) numbered item
+ 1) numbered item
+ 
+ This is _italic_, this is __bold__ and this is `monospaced` text.
+ 
+ .```
+ code block
+ .```
