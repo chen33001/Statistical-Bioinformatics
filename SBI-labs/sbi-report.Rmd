@@ -1,0 +1,160 @@
+---
+title: "sbi-report"
+output: html_document
+date: "2024-11-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r eval=TRUE}
+library(palmerpenguins)  # Load the necessary library
+Gentoo<- subset(penguins, species == "Gentoo")
+Adelie<- subset(penguins, species == "Adelie")
+Chinstrap<- subset(penguins, species == "Chinstrap")
+
+#Weight
+cWeight_Gentoo <- cut(Gentoo$body_mass_g, 
+               breaks = quantile(Gentoo$body_mass_g, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("light", "medium", "heavy"))
+
+#bill_length
+cBill_length_Gentoo <- cut(Gentoo$bill_length_mm, 
+               breaks = quantile(Gentoo$bill_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("short", "medium", "long"))
+
+#bill_depth
+cBill_depth_Gentoo <- cut(Gentoo$bill_depth_mm, 
+               breaks = quantile(Gentoo$bill_depth_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("shallow", "medium", "deep"))
+
+#flipper_len
+cFlip_Gentoo <- cut(Gentoo$flipper_length_mm, 
+               breaks = quantile(Gentoo$flipper_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("short", "medium", "long"))
+#Weight
+cWeight_Adelie <- cut(Adelie$body_mass_g, 
+               breaks = quantile(Adelie$body_mass_g, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("light", "medium", "heavy"))
+
+#bill_length
+cBill_length_Adelie <- cut(Adelie$bill_length_mm, 
+               breaks = quantile(Adelie$bill_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("short", "medium", "long"))
+#bill_depth
+cBill_depth_Adelie <- cut(Adelie$bill_depth_mm, 
+               breaks = quantile(Adelie$bill_depth_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("shallow", "medium", "deep"))
+#flipper_len
+cFlip_Adelie <- cut(Adelie$flipper_length_mm, 
+               breaks = quantile(Adelie$flipper_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("Short", "medium", "Long"))
+
+#Weight
+cWeight_Chinstrap <- cut(Chinstrap$body_mass_g, 
+               breaks = quantile(Chinstrap$body_mass_g, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("light", "medium", "heavy"))
+
+#bill_length
+cBill_length_Chinstrap <- cut(Chinstrap$bill_length_mm, 
+               breaks = quantile(Chinstrap$bill_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("short", "medium", "long"))
+#bill_depth
+cBill_depth_Chinstrap <- cut(Chinstrap$bill_depth_mm, 
+               breaks = quantile(Chinstrap$bill_depth_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("shallow", "medium", "deep"))
+#flipper_len
+cFlip_Chinstrap <- cut(Chinstrap$flipper_length_mm, 
+               breaks = quantile(Chinstrap$flipper_length_mm, c(0, 1/3, 2/3, 1),  
+                                 na.rm = TRUE), include.lowest = TRUE, 
+               labels = c("Short", "medium", "Long"))
+
+```
+```{r eval=TRUE}
+# 計算分類數量的函數（適用於任意數據列）
+compute_metric_counts_species <- function(data, metric, labels) {
+  metric_cut <- cut(data[[metric]], 
+                    breaks = quantile(data[[metric]], c(0, 1/3, 2/3, 1), na.rm = TRUE), 
+                    include.lowest = TRUE, 
+                    labels = labels)
+  return(table(metric_cut))
+}
+
+# 計算每個物種的分類數量
+compute_all_species_counts <- function(metric, labels) {
+  rbind(
+    Gentoo = compute_metric_counts_species(Gentoo, metric, labels),
+    Adelie = compute_metric_counts_species(Adelie, metric, labels),
+    Chinstrap = compute_metric_counts_species(Chinstrap, metric, labels)
+  )
+}
+
+# 計算四個指標的分類數據
+body_mass_counts <- compute_all_species_counts("body_mass_g", c("light", "medium", "heavy"))
+bill_length_counts <- compute_all_species_counts("bill_length_mm", c("short", "medium", "long"))
+bill_depth_counts <- compute_all_species_counts("bill_depth_mm", c("shallow", "medium", "deep"))
+flipper_length_counts <- compute_all_species_counts("flipper_length_mm", c("short", "medium", "long"))
+
+par(mfrow = c(2, 2))  # 設置 2x2 繪圖區域
+par(mar = c(6, 3, 4, 8))  # 調整繪圖區域，右側留出空間放圖例
+par(mgp = c(4, 1, 0)) # 第一個參數控制軸標籤，第三個控制標籤距軸的距離
+
+# Body Mass
+bp <- barplot(t(body_mass_counts),
+              beside = TRUE,
+              col = c("lightblue", "orange", "green"),
+              main = "Body Mass",
+              xlab = "Species",
+              ylab = "Count",
+              las = 2)
+legend("topright", legend = colnames(body_mass_counts), fill = c("lightblue", "orange", "green"), bty = "n", cex = 0.8, inset = c(-0.5, 0),xpd = TRUE)
+
+# Bill Length
+bp <- barplot(t(bill_length_counts),
+              beside = TRUE,
+              col = c("lightblue", "orange", "green"),
+              main = "Bill Length",
+              xlab = "Species",
+              ylab = "Count",
+              las = 2)
+legend("topright", legend = colnames(bill_length_counts), fill = c("lightblue", "orange", "green"), bty = "n", cex = 0.8, inset = c(-0.5, 0),xpd = TRUE)
+
+# Bill Depth
+bp <- barplot(t(bill_depth_counts),
+              beside = TRUE,
+              col = c("lightblue", "orange", "green"),
+              main = "Bill Depth",
+              xlab = "Species",
+              ylab = "Count",
+              las = 2)
+legend("topright", legend = colnames(bill_depth_counts), fill = c("lightblue", "orange", "green"), bty = "n", cex = 0.8, inset = c(-0.5, 0),xpd = TRUE)
+
+# Flipper Length
+bp <- barplot(t(flipper_length_counts),
+              beside = TRUE,
+              col = c("lightblue", "orange", "green"),
+              main = "Flipper Length",
+              xlab = "Species",
+              ylab = "Count",
+              las = 2)
+legend("topright", legend = colnames(flipper_length_counts), fill = c("lightblue", "orange", "green"), bty = "n", cex = 0.8, inset = c(-0.5, 0),xpd = TRUE)
+```
+
+
+```{r eval=TRUE}
+summary(Adelie)
+summary(Gentoo)
+summary(Chinstrap)
+```
